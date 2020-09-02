@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using IdleBotWeb.Models;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 
@@ -38,6 +40,26 @@ namespace IdleBotWeb.Services
             {
                 connection.Close();
             }
+        }
+
+        public IEnumerable<Player> GetAllPlayers()
+        {
+            using var connection = new MySqlConnection(ConnectionString);
+            try
+            {
+                connection.Open();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to connect to database");
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+
+            var players =
+                connection.Query<Player>(
+                    "SELECT id, avatar, name, faction, class, curHp, money, level, exp, healthStat, strengthStat, defenseStat FROM player");
+            return players;
         }
     }
 }

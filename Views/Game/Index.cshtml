@@ -5,3 +5,22 @@
 
 <h1>Game</h1>
 
+@if (ViewBag.Players == null)
+{
+    <p>There are no active players!</p>
+}
+else
+{
+    <table class="table-bordered">
+        @foreach (Player player in ViewBag.Players)
+        {
+            <tr>
+                <td><img src="@player.Avatar" class="img-thumbnail"/></td>
+                <td>@player.Name</td>
+                <td>@player.Level</td>
+                <td>@player.Faction</td>
+                <td>@player.Class</td>
+            </tr>
+        }
+    </table>
+}
