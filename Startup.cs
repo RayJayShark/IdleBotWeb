@@ -26,6 +26,13 @@ namespace IdleBotWeb
         {
             services.AddControllersWithViews();
             services.AddSingleton(new DatabaseService(Configuration.GetSection("Database")));
+            services.AddAuthentication()
+                .AddDiscord(x =>
+                {
+                    x.AppId = Configuration["Discord:AppId"];
+                    x.AppSecret = Configuration["Discord:AppSecret"];
+                    x.Scope.Add("guilds");
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +54,8 @@ namespace IdleBotWeb
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

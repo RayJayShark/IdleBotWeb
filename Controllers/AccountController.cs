@@ -9,6 +9,11 @@ namespace IdleBotWeb.Controllers
 {
     public class AccountController : Controller
     {
+        public IActionResult Login()
+        {
+            return Content("Login");
+        }
+        
         public IActionResult Profile()
         {
             return View();
