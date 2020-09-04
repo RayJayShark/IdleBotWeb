@@ -15,17 +15,26 @@ namespace IdleBotWeb.Controllers
     {
         public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return Redirect("/Account/Profile");
+            }
             return Challenge(new AuthenticationProperties { RedirectUri = "/Account/Profile/" }, DiscordAuthenticationDefaults.AuthenticationScheme);
         }
 
         public IActionResult Logout()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
             return SignOut(new AuthenticationProperties { RedirectUri = "/" },
                 CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
         public IActionResult Profile()
         {
+            //User.Claims.First().Value;   UserId
             return View();
         }
 
