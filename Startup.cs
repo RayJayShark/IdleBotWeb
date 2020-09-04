@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNet.Security.OAuth.Discord;
 using IdleBotWeb.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,12 +28,18 @@ namespace IdleBotWeb
         {
             services.AddControllersWithViews();
             services.AddSingleton(new DatabaseService(Configuration.GetSection("Database")));
-            services.AddAuthentication()
-                .AddDiscord(x =>
+            services.AddAuthentication(options =>
                 {
-                    x.AppId = Configuration["Discord:AppId"];
-                    x.AppSecret = Configuration["Discord:AppSecret"];
-                    x.Scope.Add("guilds");
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                })
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/account/login";
+                })
+                .AddDiscord(options =>
+                {
+                    options.ClientId = Configuration["Discord:ClientId"];
+                    options.ClientSecret = Configuration["Discord:ClientSecret"];
                 });
         }
 
@@ -52,10 +60,8 @@ namespace IdleBotWeb
             app.UseStaticFiles();
 
             app.UseRouting();
-
-            app.UseAuthorization();
-
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

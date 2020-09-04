@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Composition.Convention;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNet.Security.OAuth.Discord;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Bcpg;
 
 namespace IdleBotWeb.Controllers
 {
@@ -11,9 +14,9 @@ namespace IdleBotWeb.Controllers
     {
         public IActionResult Login()
         {
-            return Content("Login");
+            return Challenge(new AuthenticationProperties { RedirectUri = "/" }, DiscordAuthenticationDefaults.AuthenticationScheme);
         }
-        
+
         public IActionResult Profile()
         {
             return View();
