@@ -58,8 +58,27 @@ namespace IdleBotWeb.Services
 
             var players =
                 connection.Query<Player>(
-                    "SELECT id, avatar, name, faction, class, curHp, money, level, exp, healthStat, strengthStat, defenseStat FROM player");
+                    "SELECT id, avatar, name, faction, class, currentHp, money, level, experience, healthStat, strengthStat, defenseStat FROM player");
             return players;
+        }
+
+        public Player GetPlayer(ulong playerId)
+        {
+            using var connection = new MySqlConnection(ConnectionString);
+            try
+            {
+                connection.Open();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to connect to database");
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+
+            var player = connection.QueryFirst<Player>(
+                $"SELECT id, avatar, name, faction, class, currentHp, money, level, experience, healthStat, strengthStat, defenseStat FROM player WHERE id = {playerId}");
+            return player;
         }
     }
 }
