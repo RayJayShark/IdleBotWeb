@@ -4,6 +4,7 @@ using System.Composition.Convention;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNet.Security.OAuth.Discord;
+using IdleBotWeb.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,13 @@ namespace IdleBotWeb.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly DatabaseService _databaseService;
+
+        public AccountController(DatabaseService databaseService)
+        {
+            _databaseService = databaseService;
+        }
+        
         public IActionResult Login()
         {
             if (User.Identity.IsAuthenticated)
@@ -32,9 +40,17 @@ namespace IdleBotWeb.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
-        public IActionResult Profile()
+        public IActionResult Profile(string id)
         {
-            //User.Claims.First().Value;   UserId
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                ViewBag.Player = _databaseService.GetPlayer(ulong.Parse(User.Claims.First().Value));
+            }
+            else
+            {
+                ViewBag.Player = _databaseService.GetPlayer(ulong.Parse(id));
+            }
+
             return View();
         }
 

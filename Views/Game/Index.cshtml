@@ -14,13 +14,24 @@ else
     <table class="table-bordered">
         @foreach (Player player in ViewBag.Players)
         {
-            <tr>
-                <td><img src="@player.Avatar" class="img-thumbnail"/></td>
-                <td>@player.Name</td>
+        <tr>
+            @if (ulong.Parse(User.Claims.First().Value) == player.Id)
+            {
+                <td><a asp-controller="Account" asp-action="Profile"><img src="@player.Avatar" class="img-thumbnail" /></a></td>
+                <td><a asp-controller="Account" asp-action="Profile">@player.Name</a></td>
                 <td>@player.Level</td>
                 <td>@player.Faction</td>
                 <td>@player.Class</td>
-            </tr>
+            }
+            else
+            {
+                <td><a asp-controller="Account" asp-action="Profile" asp-route-id="@player.Id"><img src="@player.Avatar" class="img-thumbnail" /></a></td>
+                <td><a asp-controller="Account" asp-action="Profile" asp-route-id="@player.Id">@player.Name</a></td>
+                <td>@player.Level</td>
+                <td>@player.Faction</td>
+                <td>@player.Class</td>
+            }
+        </tr>
         }
     </table>
 }

@@ -1,5 +1,26 @@
 ﻿@{
     ViewData["Title"] = "Profile";
+    Player player = ViewBag.Player;
 }
 
-<h1>Profile</h1>
+<h1><u>Profile</u></h1>
+<br/>
+<div>
+    <img src="@player.Avatar" class="figure-img"/>
+    <h4>@player.Name</h4>
+</div>
+<div>
+    <p>
+        <strong>Level @player.Level @player.Faction @player.Class<br/>
+        Exp:</strong> @player.Experience
+    </p>
+    <p>
+        <strong>HP:</strong> @player.CurrentHp/@player.HealthStat
+    </p>
+    <p>
+        <strong>Strength:</strong> @player.StrengthStat
+    </p>
+    <p>
+        <strong>Defense:</strong> @player.DefenseStat
+    </p>
+</div>
