@@ -34,7 +34,8 @@ namespace IdleBotWeb
                 })
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "/account/login";
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/Logout";
                 })
                 .AddDiscord(options =>
                 {
