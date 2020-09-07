@@ -29,7 +29,7 @@ namespace IdleBotWeb
         {
             services.AddControllersWithViews();
             services.AddSingleton(new DatabaseService(Configuration.GetSection("Database")));
-            services.AddSingleton(new DiscordRestClient());
+            services.AddSingleton<DiscordService>();
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
