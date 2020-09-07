@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNet.Security.OAuth.Discord;
+using Discord.Rest;
 using IdleBotWeb.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +29,7 @@ namespace IdleBotWeb
         {
             services.AddControllersWithViews();
             services.AddSingleton(new DatabaseService(Configuration.GetSection("Database")));
+            services.AddSingleton(new DiscordRestClient());
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
