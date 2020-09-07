@@ -59,6 +59,7 @@ namespace IdleBotWeb.Services
             var players =
                 connection.Query<Player>(
                     "SELECT id, avatar, name, faction, class, currentHp, money, level, experience, healthStat, strengthStat, defenseStat FROM player");
+            connection.Close();
             return players;
         }
 
@@ -78,6 +79,7 @@ namespace IdleBotWeb.Services
 
             var player = connection.QueryFirst<Player>(
                 $"SELECT id, avatar, name, faction, class, currentHp, money, level, experience, healthStat, strengthStat, defenseStat FROM player WHERE id = {playerId}");
+            connection.Close();
             return player;
         }
     }
