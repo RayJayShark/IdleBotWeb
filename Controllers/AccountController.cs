@@ -15,10 +15,12 @@ namespace IdleBotWeb.Controllers
     public class AccountController : Controller
     {
         private readonly DatabaseService _databaseService;
+        private readonly DiscordService _discordService;
 
-        public AccountController(DatabaseService databaseService)
+        public AccountController(DatabaseService databaseService, DiscordService discordService)
         {
             _databaseService = databaseService;
+            _discordService = discordService;
         }
         
         public IActionResult Login()
@@ -42,15 +44,14 @@ namespace IdleBotWeb.Controllers
 
         public IActionResult Profile(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
+            var player = _databaseService.GetPlayer(string.IsNullOrWhiteSpace(id) ? ulong.Parse(User.Claims.First().Value) : ulong.Parse(id));
+            if (string.IsNullOrWhiteSpace(player.Avatar))
             {
-                ViewBag.Player = _databaseService.GetPlayer(ulong.Parse(User.Claims.First().Value));
-            }
-            else
-            {
-                ViewBag.Player = _databaseService.GetPlayer(ulong.Parse(id));
+                player.Avatar = _discordService.GetAvatarUrl(player.Id);
+                _databaseService.UpdateAvatar(player.Id, player.Avatar);
             }
 
+            ViewBag.Player = player;
             return View();
         }
 

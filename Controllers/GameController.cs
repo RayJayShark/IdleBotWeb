@@ -11,16 +11,27 @@ namespace IdleBotWeb.Controllers
     public class GameController : Controller
     {
         private readonly DatabaseService _databaseService;
+        private readonly DiscordService _discordService;
 
-        public GameController(DatabaseService databaseService)
+        public GameController(DatabaseService databaseService, DiscordService discordService)
         {
             _databaseService = databaseService;
+            _discordService = discordService;
         }
 
         public IActionResult Index()
         {
-            ViewBag.Players = _databaseService.GetAllPlayers();
+            var players = _databaseService.GetAllPlayers();
+            foreach (var p in players)
+            {
+                if (string.IsNullOrWhiteSpace(p.Avatar))
+                {
+                    p.Avatar =_discordService.GetAvatarUrl(p.Id);
+                    _databaseService.UpdateAvatar(p.Id, p.Avatar);
+                }
+            }
 
+            ViewBag.Players = players;
             return View();
         }
 

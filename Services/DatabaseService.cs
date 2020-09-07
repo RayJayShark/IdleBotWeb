@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using IdleBotWeb.Models;
+using Microsoft.AspNetCore.Connections.Features;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 
@@ -81,6 +82,23 @@ namespace IdleBotWeb.Services
                 $"SELECT id, avatar, name, faction, class, currentHp, money, level, experience, healthStat, strengthStat, defenseStat FROM player WHERE id = {playerId}");
             connection.Close();
             return player;
+        }
+
+        public void UpdateAvatar(ulong playerId, string avatarUrl)
+        {
+            using var connection = new MySqlConnection(ConnectionString);
+            try
+            {
+                connection.Open();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to connect to database");
+                Console.WriteLine(ex.ToString());
+            }
+
+            connection.Execute($"UPDATE player SET avatar = '{avatarUrl}' WHERE id = '{playerId}'");
+            connection.Close();
         }
     }
 }
