@@ -19,6 +19,6 @@ namespace IdleBotWeb.Models
         public ushort HealthStat { get; set; }
         public ushort StrengthStat { get; set; }
         public ushort DefenseStat { get; set; }
-
+        public Dictionary<uint, uint> Inventory { get; set; }   // <itemId, quantity>
     }
 }
