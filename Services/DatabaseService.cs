@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Dapper;
 using IdleBotWeb.Models;
@@ -154,6 +155,23 @@ namespace IdleBotWeb.Services
 
             connection.Execute($"UPDATE player SET avatar = '{avatarUrl}' WHERE id = '{playerId}'");
             connection.Close();
+        }
+
+        public List<Item> GetItems()
+        {
+            using var connection = new MySqlConnection(ConnectionString);
+            try
+            {
+                connection.Open();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to connect to database");
+                Console.WriteLine(ex.ToString());
+            }
+
+            var items = connection.Query<Item>("SELECT * FROM item");
+            return items.ToList();
         }
     }
 }
