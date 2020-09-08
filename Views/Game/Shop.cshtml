@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewData["Title"] = "Shop";
+}
+
+<h1>Shop</h1>
+
+<ul class="list-group">
+    @foreach (var item in (List<Item>)ViewBag.Items)
+    {
+        <li>@item.Name</li>
+    }
+</ul>

@@ -35,6 +35,13 @@ namespace IdleBotWeb.Controllers
             return View();
         }
 
+        public IActionResult Shop()
+        {
+            ViewBag.Items = _databaseService.GetItems();
+            
+            return View();
+        }
+
         public IActionResult Attack()
         {
             return View();
