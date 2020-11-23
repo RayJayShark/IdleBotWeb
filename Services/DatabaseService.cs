@@ -143,35 +143,7 @@ namespace IdleBotWeb.Services
             return player;
         }
 
-        public bool GivePlayerItem(ulong playerId, uint itemId)
-        {
-            using var connection = new MySqlConnection(ConnectionString);
-            try {
-                connection.Open();
-            }
-            catch (Exception ex) {
-                Console.WriteLine("Failed to connect to database");
-                Console.WriteLine(ex.ToString());
-                return false;
-            }
-
-            try
-            {
-                var itemCount = connection.QueryFirst<uint>(
-                    $"SELECT quantity FROM inventory WHERE playerId = {playerId} AND itemId = {itemId}");
-
-
-                var affectedRows = connection.Execute($"UPDATE inventory SET quantity = {itemCount + 1} WHERE playerId = {playerId} AND itemId = {itemId}");
-                return affectedRows > 0;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.ToString());
-                return false;
-            }
-        }
-
-        public bool TakePlayerMoney(ulong playerId, uint moneyToTake)
+        public bool BuyItem(ulong playerId, uint itemId, uint itemCost)
         {
             using var connection = new MySqlConnection(ConnectionString);
             try {
@@ -186,19 +158,27 @@ namespace IdleBotWeb.Services
             try
             {
                 var currentMoney = connection.QueryFirst<uint>($"SELECT money FROM player WHERE id = {playerId}");
-                if (currentMoney < moneyToTake)
+                if (currentMoney < itemCost)
                     return false;
 
-                var affectedRows =
-                    connection.Execute(
-                        $"UPDATE player SET money = {currentMoney - moneyToTake} WHERE id = {playerId}");
-                return affectedRows > 0;
+                var itemCount = connection.QueryFirst<uint>(
+                    $"SELECT quantity FROM inventory WHERE playerId = {playerId} AND itemId = {itemId}");
+
+                using var transaction = connection.BeginTransaction();
+                var affectedRowsInventory = connection.Execute($"UPDATE inventory SET quantity = {itemCount + 1} WHERE playerId = {playerId} AND itemId = {itemId}");
+                var affectedRowsPlayer = connection.Execute($"UPDATE player SET money = {currentMoney - itemCost} WHERE id = {playerId}");
+
+                transaction.Commit();
+
+                return affectedRowsInventory > 0 && affectedRowsPlayer > 0;
+
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
                 return false;
             }
+
         }
 
         public void UpdateAvatar(ulong playerId, string avatarUrl)

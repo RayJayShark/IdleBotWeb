@@ -68,16 +68,9 @@ namespace IdleBotWeb.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Shop(ulong id, [FromQuery] uint itemId, [FromQuery] uint itemCost)
         {
-            Debug.WriteLine($"player: {id}, item: {itemId}, cost: {itemCost}");
-            var successGive =_databaseService.GivePlayerItem(id, itemId);
-            var successTake = _databaseService.TakePlayerMoney(id, itemCost);
+            var success = _databaseService.BuyItem(id, itemId, itemCost);
 
-            if (!successGive || !successTake)
-            {
-                return StatusCode(500);
-            }
-
-            return StatusCode(202);
+            return StatusCode(!success ? 500 : 202);
         }
 
     }
