@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Shop";
     Player castedPlayer = ViewBag.Player;
 }
@@ -9,11 +8,12 @@
 <ul class="list-group">
     @foreach (var item in (List<Item>)ViewBag.Items)
     {
-    <li class="list-group-item">
-        <button onclick="Confirm(@item.Id)" class="btn btn-primary" id="@item.Id">Buy</button>  $@item.Cost - @item.Name
-    </li>
+        <li class="list-group-item">
+            <button onclick="Confirm('@castedPlayer.Id', @item.Id, @item.Cost)" class="btn btn-primary" id="@item.Id">Buy</button>  $@item.Cost - @item.Name
+        </li>
     }
 </ul>
 <div>Money: @castedPlayer.Money</div>
 
 <script src="~/js/site.js"></script>
+<script src="~/lib/axios/dist/axios.min.js"></script>

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using IdleBotWeb.Models;
 using IdleBotWeb.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdleBotWeb.Controllers
@@ -57,5 +60,25 @@ namespace IdleBotWeb.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Shop(ulong id, [FromQuery] uint itemId, [FromQuery] uint itemCost)
+        {
+            Debug.WriteLine($"player: {id}, item: {itemId}, cost: {itemCost}");
+            var successGive =_databaseService.GivePlayerItem(id, itemId);
+            var successTake = _databaseService.TakePlayerMoney(id, itemCost);
+
+            if (!successGive || !successTake)
+            {
+                return StatusCode(500);
+            }
+
+            return StatusCode(202);
+        }
+
     }
 }

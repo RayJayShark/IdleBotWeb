@@ -1,15 +1,15 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-function Confirm(itemId) {
+﻿function Confirm(playerId, itemId, itemCost) {
     const button = document.getElementById(itemId);
     button.innerText = "Sure?";
-    button.setAttribute("onclick", `Buy(${itemId})`);
-    console.log("Confirmation triggered");
+    button.setAttribute("onclick", `Buy('${playerId}', ${itemId}, ${itemCost})`);
 }
 
-function Buy(itemId) {
-
-    console.log("Bought");
+function Buy(playerId, itemId, itemCost) {
+    axios.post(`/Game/Shop/${playerId}?itemId=${itemId}&itemCost=${itemCost}`)
+        .then(res => {
+            const button = document.getElementById(itemId);
+            button.innerText = "Buy";
+            button.setAttribute("onclick", `Confirm('${playerId}', ${itemId}, ${itemCost})`);
+        });
+    ;
 }

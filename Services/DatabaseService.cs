@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Dapper;
 using IdleBotWeb.Models;
 using Microsoft.AspNetCore.Connections.Features;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
+using Exception = System.Exception;
 
 namespace IdleBotWeb.Services
 {
@@ -138,6 +141,64 @@ namespace IdleBotWeb.Services
 
             connection.Close();
             return player;
+        }
+
+        public bool GivePlayerItem(ulong playerId, uint itemId)
+        {
+            using var connection = new MySqlConnection(ConnectionString);
+            try {
+                connection.Open();
+            }
+            catch (Exception ex) {
+                Console.WriteLine("Failed to connect to database");
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+
+            try
+            {
+                var itemCount = connection.QueryFirst<uint>(
+                    $"SELECT quantity FROM inventory WHERE playerId = {playerId} AND itemId = {itemId}");
+
+
+                var affectedRows = connection.Execute($"UPDATE inventory SET quantity = {itemCount + 1} WHERE playerId = {playerId} AND itemId = {itemId}");
+                return affectedRows > 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
+        public bool TakePlayerMoney(ulong playerId, uint moneyToTake)
+        {
+            using var connection = new MySqlConnection(ConnectionString);
+            try {
+                connection.Open();
+            }
+            catch (Exception ex) {
+                Console.WriteLine("Failed to connect to database");
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+
+            try
+            {
+                var currentMoney = connection.QueryFirst<uint>($"SELECT money FROM player WHERE id = {playerId}");
+                if (currentMoney < moneyToTake)
+                    return false;
+
+                var affectedRows =
+                    connection.Execute(
+                        $"UPDATE player SET money = {currentMoney - moneyToTake} WHERE id = {playerId}");
+                return affectedRows > 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                return false;
+            }
         }
 
         public void UpdateAvatar(ulong playerId, string avatarUrl)
