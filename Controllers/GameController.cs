@@ -38,6 +38,7 @@ namespace IdleBotWeb.Controllers
         public IActionResult Shop()
         {
             ViewBag.Items = _databaseService.GetItems();
+            ViewBag.Player = _databaseService.GetPlayer(ulong.Parse(User.Claims.First().Value));
             
             return View();
         }
