@@ -10,6 +10,7 @@
     <PackageReference Include="Discord.Net.Rest" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="MySql.Data" Version="8.0.21" />
+    <PackageReference Include="React.AspNet" Version="5.2.11" />
   </ItemGroup>
 
 </Project>
