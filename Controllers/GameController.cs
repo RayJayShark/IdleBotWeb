@@ -64,7 +64,6 @@ namespace IdleBotWeb.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Shop(ulong id, [FromQuery] uint itemId, [FromQuery] uint itemCost)
         {
