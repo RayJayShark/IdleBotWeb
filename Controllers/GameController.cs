@@ -68,7 +68,7 @@ namespace IdleBotWeb.Controllers
         public IActionResult Shop(ulong id, [FromQuery] uint itemId, [FromQuery] uint itemCost)
         {
             var success = _databaseService.BuyItem(id, itemId, itemCost);
-
+            // Return the money or use auth
             return StatusCode(!success ? 500 : 202);
         }
 
