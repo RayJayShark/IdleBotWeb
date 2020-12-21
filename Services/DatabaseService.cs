@@ -155,9 +155,10 @@ namespace IdleBotWeb.Services
                 return false;
             }
 
+            var currentMoney = uint.MinValue;
             try
             {
-                var currentMoney = connection.QueryFirst<uint>($"SELECT money FROM player WHERE id = {playerId}");
+                currentMoney = connection.QueryFirst<uint>($"SELECT money FROM player WHERE id = {playerId}");
                 if (currentMoney < itemCost)
                     return false;
 
@@ -165,13 +166,28 @@ namespace IdleBotWeb.Services
                     $"SELECT quantity FROM inventory WHERE playerId = {playerId} AND itemId = {itemId}");
 
                 using var transaction = connection.BeginTransaction();
-                var affectedRowsInventory = connection.Execute($"UPDATE inventory SET quantity = {itemCount + 1} WHERE playerId = {playerId} AND itemId = {itemId}");
-                var affectedRowsPlayer = connection.Execute($"UPDATE player SET money = {currentMoney - itemCost} WHERE id = {playerId}");
+                var affectedRowsInventory =
+                    connection.Execute(
+                        $"UPDATE inventory SET quantity = {itemCount + 1} WHERE playerId = {playerId} AND itemId = {itemId}");
+                var affectedRowsPlayer =
+                    connection.Execute($"UPDATE player SET money = {currentMoney - itemCost} WHERE id = {playerId}");
 
                 transaction.Commit();
 
                 return affectedRowsInventory > 0 && affectedRowsPlayer > 0;
 
+            }
+            catch (InvalidOperationException ex)
+            {
+                using var transaction = connection.BeginTransaction();
+                var affectedRowsInventory =
+                    connection.Execute(
+                        $"INSERT INTO inventory (playerId,itemId,quantity) VALUES ({playerId},{itemId},1)");
+                var affectedRowsPlayer =
+                    connection.Execute($"UPDATE player SET money = {currentMoney - itemCost} WHERE id = {playerId}");
+
+                transaction.Commit();
+                return affectedRowsInventory > 0 && affectedRowsPlayer > 0;
             }
             catch (Exception ex)
             {
