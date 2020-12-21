@@ -9,7 +9,7 @@
     @foreach (var item in (List<Item>)ViewBag.Items)
     {
         <li class="list-group-item">
-            <button onclick="Confirm('@castedPlayer.Id', @item.Id, @item.Cost)" class="btn btn-primary" id="@item.Id">Buy</button>  $@item.Cost - @item.Name
+            <button onclick="Confirm(@item.Id, @item.Cost)" class="btn btn-primary" id="@item.Id">Buy</button>  $@item.Cost - @item.Name
         </li>
     }
 </ul>

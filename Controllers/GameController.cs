@@ -65,13 +65,13 @@ namespace IdleBotWeb.Controllers
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult Shop(ulong id, [FromQuery] uint itemId, [FromQuery] uint itemCost)
+        public IActionResult Shop([FromBody] Item item)
         {
             if (!User.Identity.IsAuthenticated)
             {
                 return StatusCode(401);
             }
-            var success = _databaseService.BuyItem(id, itemId, itemCost);
+            var success = _databaseService.BuyItem(ulong.Parse(User.Claims.First().Value), item.Id, item.Cost);
             // Return the money or use auth
             return StatusCode(!success ? 500 : 202);
         }
