@@ -11,8 +11,10 @@ function Buy(itemId, itemCost) {
                 Cost: itemCost
             })
         .then(res => {
-            const money = document.getElementById("money");
-            money.innerText -= itemCost;
+            if (res.status === 201) {
+                const money = document.getElementById("money");
+                money.innerText -= itemCost;
+            }
             const button = document.getElementById(itemId);
             button.innerText = "Buy";
             button.setAttribute("onclick", `Confirm(${itemId}, ${itemCost})`);
