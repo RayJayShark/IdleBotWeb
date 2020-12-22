@@ -2,7 +2,7 @@
 {
     const money = document.getElementById("money");
     if (itemCost > money.innerText) {
-        ReactDOM.render(<Error message={"You lack sufficient funds"} />, document.getElementById('error'));
+        ReactDOM.render(<Error message={"You lack sufficient funds"}/>, document.getElementById('topNotification'));
         return;
     }
     const button = document.getElementById(itemId);
