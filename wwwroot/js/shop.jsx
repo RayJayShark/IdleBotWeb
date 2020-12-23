@@ -1,45 +1,37 @@
-﻿var itemIdToBuy = null;
-var itemCostToBuy = null;
+﻿var itemToBuy = null;
 
-function Confirm(itemId, itemCost) {
-    console.log("Confirm");
+function Confirm(item) {
     const money = document.getElementById("money");
-    if (itemCost > money.innerText) {
+    if (item.Cost > money.innerText) {
         ReactDOM.render(<Error message={"You lack sufficient funds"}/>, document.getElementById('topNotification'));
         return;
     }
 
-    if (itemIdToBuy !== null) {
-        const oldButton = document.getElementById(itemIdToBuy);
+    if (itemToBuy !== null) {
+        const oldButton = document.getElementById(itemToBuy.Id);
         oldButton.innerText = "Buy";
-        oldButton.setAttribute("onclick", `Confirm(${itemIdToBuy}, ${itemCostToBuy})`);
+        oldButton.setAttribute("onclick", `Confirm(${JSON.stringify(itemToBuy)})`);
     }
-    const button = document.getElementById(itemId);
+    const button = document.getElementById(item.Id);
     button.innerText = "Sure?";
     button.setAttribute("onclick", `Buy()`);
-    itemIdToBuy = itemId;
-    itemCostToBuy = itemCost;
+    itemToBuy = item;
 }
 
 function Buy() {
-    console.log("Buy");
-    axios.post(`/Game/Shop/`,
-            {
-                Id: itemIdToBuy,
-                Cost: itemCostToBuy
-            })
+    axios.post(`/Game/Shop/`, itemToBuy)
         .then(res =>
         {
             if (res.status === 201)
             {
                 const money = document.getElementById("money");
-                money.innerText -= itemCostToBuy;
+                money.innerText -= itemToBuy.Cost;
+                ReactDOM.render(<Success message={`You successfully purchased a ${itemToBuy.Name}`} />, document.getElementById('topNotification'));
             }
-            const button = document.getElementById(itemIdToBuy);
+            const button = document.getElementById(itemToBuy.Id);
             button.innerText = "Buy";
-            button.setAttribute("onclick", `Confirm(${itemIdToBuy}, ${itemCostToBuy})`);
-            itemIdToBuy = null;
-            itemCostToBuy = null;
+            button.setAttribute("onclick", `Confirm(${JSON.stringify(itemToBuy)})`);
+            itemToBuy = null;
         });
     ;
 }
